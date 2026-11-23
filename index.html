@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ภารกิจพิชิต ม.1 สพฐ. - คลัง 250 ข้อ มีรูปตัวอย่าง & คำอธิบายภาษาเด็ก</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Mali & Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- External 250-Question Bank with Embedded Visual Diagrams -->
+  <script src="questions_data.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            prompt: ['Prompt', 'sans-serif'],
+            mali: ['Mali', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Prompt', sans-serif; }
+    .game-font { font-family: 'Mali', cursive; }
+    .pixel-box { box-shadow: 0 8px 0px rgba(0,0,0,0.06), 0 15px 25px rgba(0,0,0,0.03); }
+    .btn-bounce { transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 5px 0 #CBD5E1; }
+    .btn-bounce:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #CBD5E1; }
+    .btn-bounce:active { transform: translateY(4px); box-shadow: 0 1px 0 #CBD5E1; }
+
+    /* Animated Sound Wave */
+    @keyframes soundWave {
+      0%, 100% { height: 6px; }
+      50% { height: 18px; }
+    }
+    .wave-bar { width: 3px; background-color: currentColor; border-radius: 9999px; display: inline-block; }
+    .speaking .bar-1 { animation: soundWave 0.6s infinite ease-in-out; }
+    .speaking .bar-2 { animation: soundWave 0.6s infinite ease-in-out 0.15s; }
+    .speaking .bar-3 { animation: soundWave 0.6s infinite ease-in-out 0.3s; }
+
+    /* Speech Bubble Triangle */
+    .bubble-arrow::after {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: -10px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 10px solid #FEF3C7;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-amber-200">
+
+  <!-- ==================== TOP NAVIGATION ==================== -->
+  <header class="bg-white border-b-4 border-amber-300 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <!-- Player Profile & Bank Counter -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-md text-2xl border-2 border-white transform hover:rotate-6 transition">
+          🧙‍♂️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-900 game-font text-base sm:text-lg">พิชิต ม.1 สพฐ.</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">คลัง 250 ข้อเต็ม</span>
+          </div>
+          <div class="text-[11px] text-slate-500">มีรูปตัวอย่างทุกข้อ • คำอธิบายภาษาเด็กเข้าใจง่าย</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions: Voice, Gold, Mistake Clinic -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Voice Settings Button -->
+        <button onclick="openVoiceSettingsModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-sky-50 border-2 border-sky-300 text-xs sm:text-sm font-bold text-sky-800 hover:bg-sky-100 transition" title="ปรับเสียงผู้หญิง/ผู้ชาย และความเร็ว">
+          <i data-lucide="volume-2" class="w-4 h-4 text-sky-600"></i>
+          <span class="hidden sm:inline">ตั้งค่าเสียงพูด</span>
+          <i data-lucide="settings" class="w-3.5 h-3.5 text-sky-500"></i>
+        </button>
+
+        <!-- Gold Coins -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-100 border-2 border-amber-300 text-xs sm:text-sm font-bold text-amber-800">
+          <span>🪙</span>
+          <span id="goldCoins">450</span>
+        </div>
+
+        <!-- Mistake Clinic Pill -->
+        <button onclick="switchTab('clinic')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-purple-600 text-white font-bold text-xs sm:text-sm btn-bounce shadow-md hover:bg-purple-700">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>คลินิกข้อผิด</span>
+          <span class="bg-white text-purple-700 text-xs px-1.5 rounded-full font-black ml-1" id="badgeMistakeCount">3</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="max-w-6xl mx-auto px-4 flex gap-2 border-t border-slate-100 text-sm overflow-x-auto">
+      <button onclick="switchTab('quest')" id="tab-quest" class="py-2.5 px-3.5 font-bold text-amber-600 border-b-4 border-amber-500 flex items-center gap-2 whitespace-nowrap game-font">
+        ⚔️ ตะลุยข้อสอบ 250 ข้อ (มีรูปประกอบ)
+      </button>
+      <button onclick="switchTab('clinic')" id="tab-clinic" class="py-2.5 px-3.5 font-medium text-slate-500 hover:text-purple-600 border-b-4 border-transparent flex items-center gap-2 whitespace-nowrap game-font">
+        📦 กล่องความจำ 5 ระดับ (Leitner)
+      </button>
+      <button onclick="switchTab('schedule')" id="tab-schedule" class="py-2.5 px-3.5 font-medium text-slate-500 hover:text-blue-600 border-b-4 border-transparent flex items-center gap-2 whitespace-nowrap game-font">
+        📅 ตารางฝึก 3-4 เดือน
+      </button>
+    </nav>
+  </header>
+
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full space-y-5">
+
+    <!-- ==================== VIEW 1: QUEST ARENA ==================== -->
+    <div id="view-quest" class="space-y-5">
+      
+      <!-- REALM / 50-QUESTION SELECTOR BAR -->
+      <div class="bg-white rounded-3xl p-4 sm:p-5 pixel-box border-2 border-slate-200 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <i data-lucide="layers" class="w-4 h-4 text-amber-500"></i> เลือกหมวดวิชา (วิชาละ 50 ข้อเต็ม):
+          </span>
+          <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200" id="currentSubjectCounterLabel">
+            กำลังฝึก: คณิตศาสตร์ (ข้อ 1/50)
+          </span>
+        </div>
+
+        <!-- 5 Subjects + Daily Mix Pills -->
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
+          <button onclick="selectSubjectRealm('math')" id="realm-math" class="realm-pill py-2.5 px-3 rounded-2xl text-xs font-bold bg-amber-500 text-slate-950 border-2 border-amber-600 flex flex-col items-center justify-center gap-1 shadow-sm transition">
+            <span class="text-base">📐</span>
+            <span>คณิตศาสตร์ (50)</span>
+          </button>
+          <button onclick="selectSubjectRealm('science')" id="realm-science" class="realm-pill py-2.5 px-3 rounded-2xl text-xs font-bold bg-slate-50 text-slate-700 border-2 border-slate-200 hover:border-emerald-400 flex flex-col items-center justify-center gap-1 transition">
+            <span class="text-base">🔬</span>
+            <span>วิทยาศาสตร์ (50)</span>
+          </button>
+          <button onclick="selectSubjectRealm('english')" id="realm-english" class="realm-pill py-2.5 px-3 rounded-2xl text-xs font-bold bg-slate-50 text-slate-700 border-2 border-slate-200 hover:border-purple-400 flex flex-col items-center justify-center gap-1 transition">
+            <span class="text-base">🇬🇧</span>
+            <span>อังกฤษ (50)</span>
+          </button>
+          <button onclick="selectSubjectRealm('thai')" id="realm-thai" class="realm-pill py-2.5 px-3 rounded-2xl text-xs font-bold bg-slate-50 text-slate-700 border-2 border-slate-200 hover:border-pink-400 flex flex-col items-center justify-center gap-1 transition">
+            <span class="text-base">📖</span>
+            <span>ภาษาไทย (50)</span>
+          </button>
+          <button onclick="selectSubjectRealm('social')" id="realm-social" class="realm-pill py-2.5 px-3 rounded-2xl text-xs font-bold bg-slate-50 text-slate-700 border-2 border-slate-200 hover:border-amber-400 flex flex-col items-center justify-center gap-1 transition">
+            <span class="text-base">🌏</span>
+            <span>สังคมศึกษา (50)</span>
+          </button>
+          <button onclick="selectSubjectRealm('daily')" id="realm-daily" class="realm-pill py-2.5 px-3 rounded-2xl text-xs font-bold bg-slate-50 text-slate-700 border-2 border-slate-200 hover:border-blue-400 flex flex-col items-center justify-center gap-1 col-span-2 sm:col-span-1 transition">
+            <span class="text-base">🌟</span>
+            <span>ควิซวันนี้ (10)</span>
+          </button>
+        </div>
+
+        <!-- 50-Question Quick Jump Grid -->
+        <div class="pt-2 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-600 flex items-center gap-1">
+              <i data-lucide="grid" class="w-3.5 h-3.5"></i> เลือกข้อที่ต้องการทำ (1 - 50):
+            </span>
+            <span class="text-[11px] text-slate-400">เขียว=ถูก • แดง=ผิด • เทา=ยังไม่ได้ทำ</span>
+          </div>
+          <!-- 50 Buttons Container -->
+          <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1 bg-slate-50 rounded-xl border border-slate-200" id="questionJumpGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- BOSS HP BATTLE BANNER -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-4 sm:p-5 text-white pixel-box border-2 border-indigo-500/40 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl animate-bounce">🗿</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-bold uppercase">BOSS</span>
+              <h3 class="font-bold text-base sm:text-lg game-font text-amber-300" id="bossTitle">โกเลมข้อสอบ ม.1</h3>
+            </div>
+            <p class="text-xs text-slate-300 mt-0.5">ตอบถูกฟันดาเมจลดเลือดบอสทันที ตอบผิดพี่ฮูกช่วยพาแก้มือ!</p>
+          </div>
+        </div>
+        <div class="w-32 sm:w-48 text-right">
+          <div class="text-xs font-bold text-rose-400 mb-1 flex justify-between">
+            <span>HP บอส</span>
+            <span id="bossHpCounter">50 / 50</span>
+          </div>
+          <div class="w-full bg-slate-800 rounded-full h-3 border border-slate-700 overflow-hidden">
+            <div class="bg-gradient-to-r from-rose-500 to-amber-500 h-3 rounded-full transition-all duration-300" style="width: 100%" id="bossHpFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== MAIN QUESTION CARD ==================== -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 pixel-box border-4 border-amber-200 relative">
+        
+        <!-- Header & Audio Player Tools -->
+        <div class="flex flex-wrap items-center justify-between pb-4 border-b-2 border-slate-100 gap-3 mb-5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-900 rounded-xl border border-amber-200" id="badgeSubjectName">
+              📐 คณิตศาสตร์ ม.1 ทั่วไป
+            </span>
+            <span class="text-xs font-bold text-slate-400" id="textQuestionIndex">ข้อที่ 1 / 50</span>
+          </div>
+
+          <!-- Functional Buttons -->
+          <div class="flex items-center gap-2">
+            <!-- 🔊 TTS Button with Soundwave -->
+            <button onclick="toggleSpeechQuestion()" id="btn-play-tts" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-900 text-xs font-bold border-2 border-sky-300 transition" title="กดเพื่อให้ระบบอ่านออกเสียงโจทย์ภาษาไทย">
+              <i data-lucide="volume-2" class="w-4 h-4 text-sky-700"></i>
+              <span id="ttsBtnLabel">ฟังเสียงอ่าน</span>
+              <span class="inline-flex items-center gap-0.5 ml-0.5 h-3.5">
+                <span class="wave-bar bar-1 h-1.5"></span>
+                <span class="wave-bar bar-2 h-3.5"></span>
+                <span class="wave-bar bar-3 h-1.5"></span>
+              </span>
+            </button>
+
+            <!-- 💡 Peek Hint & Explanation Button -->
+            <button onclick="peekExplanationBeforeAnswer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold border-2 border-amber-300 transition" title="ถ้าคิดไม่ออก กดดูรูปใบ้และแนวคิดก่อนได้">
+              <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-700"></i> ดูรูปใบ้
+            </button>
+
+            <!-- ✏️ Digital Scratchpad -->
+            <button onclick="toggleScratchpad()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold border-2 border-emerald-300 transition">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> กระดาษทด
+            </button>
+
+            <!-- ✂️ 50:50 Tool -->
+            <button onclick="use5050Tool()" id="btn-5050" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-amber-100 text-slate-700 text-xs font-bold border border-slate-300 transition" title="ตัด 2 ช้อยส์หลอก">
+              <span>✂️</span> 50:50 (<span id="count5050">1</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Stem & Vector Graphics -->
+        <div class="space-y-4 mb-6">
+          <div class="text-xs font-bold text-amber-600 flex items-center gap-1.5">
+            <i data-lucide="compass" class="w-4 h-4"></i> <span id="textTopic">หัวข้อ: ห.ร.ม. และ ค.ร.น.</span>
+          </div>
+
+          <p class="text-slate-900 text-lg sm:text-xl font-medium leading-relaxed" id="textStem">
+            <!-- Question stem text -->
+          </p>
+
+          <!-- SVG Graphic Box -->
+          <div id="boxSvgGraphic" class="p-4 rounded-2xl bg-amber-50/40 border-2 border-amber-200/60 flex justify-center items-center my-3 overflow-hidden hidden">
+            <!-- SVG injected here -->
+          </div>
+        </div>
+
+        <!-- Choices (ก ข ค ง) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-5" id="gridChoices">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- ==================== MASCOT SOLUTION & VISUAL DIAGRAM BUBBLE ==================== -->
+        <div id="boxMascotSolution" class="hidden rounded-3xl p-5 sm:p-6 border-3 border-amber-300 bg-amber-50/95 text-sm space-y-4 transition mt-6 relative">
+          
+          <div class="flex items-start gap-3">
+            <div class="text-4xl shrink-0 p-1 bg-white rounded-2xl border-2 border-amber-300 shadow-sm" id="mascotFace">
+              🦉
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-amber-950 text-base game-font flex items-center gap-1.5">
+                  พี่ฮูกชวนคิด <span class="text-xs font-normal text-amber-700">(อธิบายแบบเข้าใจง่ายสุดๆ สำหรับเด็ก)</span>
+                </span>
+                
+                <!-- 🔊 Solution TTS Button -->
+                <button onclick="toggleSpeechSolution()" id="btn-solution-tts" class="flex items-center gap-1 px-3 py-1 rounded-xl bg-white hover:bg-amber-100 text-amber-900 text-xs font-bold border border-amber-300 shadow-sm transition">
+                  <i data-lucide="volume-2" class="w-3.5 h-3.5 text-amber-700"></i>
+                  <span id="ttsSolutionLabel">ฟังเสียงอธิบาย</span>
+                  <span class="inline-flex items-center gap-0.5 ml-0.5 h-3.5">
+                    <span class="wave-bar bar-1 h-1.5"></span>
+                    <span class="wave-bar bar-2 h-3"></span>
+                    <span class="wave-bar bar-3 h-1.5"></span>
+                  </span>
+                </button>
+              </div>
+
+              <!-- Greeting banner -->
+              <div class="mt-1 font-bold text-sm" id="textResultGreeting"></div>
+            </div>
+          </div>
+
+          <!-- Dialogue Speech Bubble with VISUAL DIAGRAM -->
+          <div class="bg-white rounded-2xl p-4 sm:p-5 border-2 border-amber-200 shadow-sm relative bubble-arrow space-y-4">
+            
+            <!-- 🖼️ VISUAL EXPLANATION DIAGRAM (รูปตัวอย่างประกอบวิธีคิด) -->
+            <div id="boxExplDiagramContainer" class="p-3 bg-amber-50/40 rounded-2xl border-2 border-amber-300 flex flex-col items-center justify-center shadow-inner">
+              <span class="text-xs font-bold text-amber-900 mb-2 flex items-center gap-1.5 self-start">
+                🖼️ รูปภาพตัวอย่างประกอบวิธีคิด (ดูภาพนี้แล้วเข้าใจทันที!):
+              </span>
+              <div id="boxExplSvg" class="w-full flex justify-center overflow-x-auto">
+                <!-- Expl SVG injected here -->
+              </div>
+            </div>
+
+            <!-- Visual Metaphor Story -->
+            <div>
+              <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md inline-block mb-1">
+                🎮 คิดง่ายๆ แบบเกมเมอร์ (ภาพในหัว):
+              </span>
+              <p class="text-slate-800 text-sm sm:text-base leading-relaxed" id="textMetaphor"></p>
+            </div>
+
+            <!-- Mathematical / Logical Step -->
+            <div>
+              <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md inline-block mb-1">
+                ✍️ วิธีคิด 3 สเต็ปแบบจับมือทำ:
+              </span>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-mono text-slate-800 leading-relaxed" id="textMathSteps"></div>
+            </div>
+
+            <!-- 10-Second Pro Shortcut -->
+            <div class="p-3 rounded-xl bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 text-xs sm:text-sm text-amber-950 flex items-start gap-2">
+              <span class="text-lg">⚡</span>
+              <div>
+                <span class="font-bold">สูตรลัด 10 วินาทีในห้องสอบ:</span>
+                <p id="textProShortcut" class="mt-0.5 leading-relaxed font-sans"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next Button -->
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs text-amber-800 font-semibold" id="textLeitnerStatus"></span>
+            <button onclick="goToNextQuestion()" class="px-6 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold btn-bounce text-sm flex items-center gap-2">
+              <span>ลุยข้อต่อไป</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 2: LEITNER 5-BOX CLINIC ==================== -->
+    <div id="view-clinic" class="hidden space-y-5">
+      <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 rounded-3xl p-6 sm:p-7 text-white pixel-box border-4 border-purple-400/40">
+        <div class="flex items-center gap-2 text-xs font-bold bg-white/20 px-3 py-1 rounded-full w-fit mb-2">
+          <span>📦</span> ระบบกล่องความจำ 5 ระดับ (Spaced Repetition)
+        </div>
+        <h2 class="text-2xl font-bold game-font mb-1">คลินิกซ่อมข้อผิด: ทำซ้ำๆ จนได้เต็ม 100%!</h2>
+        <p class="text-purple-100 text-xs sm:text-sm max-w-xl leading-relaxed">
+          ข้อที่น้องทำผิดจากทั้ง 250 ข้อ จะถูกส่งเข้า <b>กล่องที่ 1</b> และวนกลับมาให้แก้มือตามระยะเวลา (1 วัน ➔ 3 วัน ➔ 7 วัน ➔ 14 วัน) พร้อมรูปตัวอย่างประกอบ จนกว่าจะเข้า <b>กล่องที่ 5 (เซียน 100%)</b>
+        </p>
+      </div>
+
+      <!-- 5 Boxes Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div class="bg-white rounded-2xl p-4 border-3 border-rose-300 pixel-box text-center">
+          <div class="text-[11px] font-bold text-rose-600 uppercase">กล่อง 1 (ทบทวนทุกวัน)</div>
+          <div class="text-3xl font-black text-slate-800 my-1" id="countBox1">3</div>
+          <div class="text-[10px] text-slate-400">เพิ่งผิด / ต้องแก้มือ</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border-3 border-orange-300 pixel-box text-center">
+          <div class="text-[11px] font-bold text-orange-600 uppercase">กล่อง 2 (เว้น 3 วัน)</div>
+          <div class="text-3xl font-black text-slate-800 my-1" id="countBox2">1</div>
+          <div class="text-[10px] text-slate-400">ถูก 1 ครั้งติด</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border-3 border-amber-300 pixel-box text-center">
+          <div class="text-[11px] font-bold text-amber-600 uppercase">กล่อง 3 (เว้น 7 วัน)</div>
+          <div class="text-3xl font-black text-slate-800 my-1" id="countBox3">1</div>
+          <div class="text-[10px] text-slate-400">ถูก 2 ครั้งติด</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border-3 border-sky-300 pixel-box text-center">
+          <div class="text-[11px] font-bold text-sky-600 uppercase">กล่อง 4 (เว้น 14 วัน)</div>
+          <div class="text-3xl font-black text-slate-800 my-1" id="countBox4">0</div>
+          <div class="text-[10px] text-slate-400">ถูก 3 ครั้งติด</div>
+        </div>
+        <div class="bg-emerald-50 rounded-2xl p-4 border-3 border-emerald-400 pixel-box text-center col-span-2 sm:col-span-1">
+          <div class="text-[11px] font-bold text-emerald-700 uppercase">🏆 กล่อง 5 (เซียน 100%)</div>
+          <div class="text-3xl font-black text-emerald-800 my-1" id="countBox5">8</div>
+          <div class="text-[10px] text-emerald-600 font-bold">จำแม่นยำถาวร!</div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="bg-white rounded-3xl p-5 border-2 border-slate-200 pixel-box flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-slate-900 text-base game-font flex items-center gap-2">
+            <span>🔥</span> เริ่มรอบแก้ตัว (Redemption Round)
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">ระบบจะสลับช้อยส์ ก ข ค ง เพื่อให้มั่นใจว่าน้องคิดตามวิธีทำจริง ไม่จำตำแหน่งช้อยส์</p>
+        </div>
+        <button onclick="startRedemptionMode()" class="px-6 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold btn-bounce text-sm flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="play" class="w-4 h-4"></i> ซ้อมทำข้อที่ค้าง (<span id="btnMistakeCount">3</span> ข้อ)
+        </button>
+      </div>
+
+      <!-- Mistake Items List -->
+      <div class="bg-white rounded-3xl p-5 border-2 border-slate-200 pixel-box space-y-3">
+        <h4 class="font-bold text-slate-700 text-sm flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4"></i> รายการข้อที่กำลังรักษาอยู่ในคลินิก
+        </h4>
+        <div class="space-y-2.5" id="clinicItemsList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 3: SCHEDULE ==================== -->
+    <div id="view-schedule" class="hidden space-y-5">
+      <div class="bg-white rounded-3xl p-6 sm:p-7 pixel-box border-4 border-blue-200">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold mb-3">
+          <i data-lucide="compass" class="w-4 h-4"></i> แผนที่ผจญภัย 16 สัปดาห์ (3-4 เดือน)
+        </div>
+        <h2 class="text-2xl font-bold game-font text-slate-900 mb-2">ตารางฝึกรายวันแบบไม่เครียด: วันละ 25-35 นาที</h2>
+        <p class="text-slate-600 text-sm leading-relaxed mb-6">
+          ด้วยคลังข้อสอบ 250 ข้อเต็ม แบ่งทำวันละ 10 ข้อ + เคลียร์ 3 ข้อผิดในคลินิก น้องจะทำครบทุกวิชาอย่างแม่นยำภายใน 4 เดือน
+        </p>
+
+        <!-- 7 Days Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-7 gap-2.5 text-xs">
+          <div class="p-3 rounded-2xl bg-blue-50 border border-blue-200">
+            <span class="font-bold text-blue-800 block mb-1">จันทร์</span>
+            <div class="font-semibold text-slate-800">📐 คณิต (10 ข้อ)</div>
+            <div class="text-[10px] text-slate-500 mt-1">+ คลินิก 3 ข้อ</div>
+            <div class="mt-2 text-[10px] text-blue-700 font-bold">⏱️ 30 นาที</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
+            <span class="font-bold text-emerald-800 block mb-1">อังคาร</span>
+            <div class="font-semibold text-slate-800">🔬 วิทย์ (10 ข้อ)</div>
+            <div class="text-[10px] text-slate-500 mt-1">+ คลินิก 3 ข้อ</div>
+            <div class="mt-2 text-[10px] text-emerald-700 font-bold">⏱️ 30 นาที</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-purple-50 border border-purple-200">
+            <span class="font-bold text-purple-800 block mb-1">พุธ</span>
+            <div class="font-semibold text-slate-800">🇬🇧 อังกฤษ (10 ข้อ)</div>
+            <div class="text-[10px] text-slate-500 mt-1">+ คลินิก 3 ข้อ</div>
+            <div class="mt-2 text-[10px] text-purple-700 font-bold">⏱️ 25 นาที</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-pink-50 border border-pink-200">
+            <span class="font-bold text-pink-800 block mb-1">พฤหัส</span>
+            <div class="font-semibold text-slate-800">📖 ไทย (10 ข้อ)</div>
+            <div class="text-[10px] text-slate-500 mt-1">+ คลินิก 3 ข้อ</div>
+            <div class="mt-2 text-[10px] text-pink-700 font-bold">⏱️ 25 นาที</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200">
+            <span class="font-bold text-amber-800 block mb-1">ศุกร์</span>
+            <div class="font-semibold text-slate-800">🌏 สังคม (10 ข้อ)</div>
+            <div class="text-[10px] text-slate-500 mt-1">+ คลินิก 3 ข้อ</div>
+            <div class="mt-2 text-[10px] text-amber-700 font-bold">⏱️ 25 นาที</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-rose-50 border border-rose-200">
+            <span class="font-bold text-rose-800 block mb-1">เสาร์</span>
+            <div class="font-semibold text-slate-800">🎯 Mini Mock 20 ข้อ</div>
+            <div class="text-[10px] text-slate-500 mt-1">คละวิชา จับเวลาจริง</div>
+            <div class="mt-2 text-[10px] text-rose-700 font-bold">⏱️ 50 นาที</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-teal-50 border border-teal-300">
+            <span class="font-bold text-teal-800 block mb-1">อาทิตย์</span>
+            <div class="font-bold text-teal-900">🎉 พักผ่อน 100%!</div>
+            <div class="text-[10px] text-slate-500 mt-1">รีเซ็ตสมอง / ไม่ทำการบ้าน</div>
+            <div class="mt-2 text-[10px] text-teal-700 font-bold">Free Day</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==================== VOICE SETTINGS MODAL ==================== -->
+  <div id="voiceSettingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 pixel-box border-4 border-sky-300 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🎙️</span>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base game-font">ตั้งค่าเสียงอ่านออกเสียงภาษาไทย</h3>
+            <p class="text-xs text-slate-400">ปรับเลือกเสียงให้เป็นธรรมชาติที่สุดสำหรับเครื่องของคุณ</p>
+          </div>
+        </div>
+        <button onclick="closeVoiceSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500">✕</button>
+      </div>
+
+      <div class="space-y-3.5 text-xs sm:text-sm">
+        <!-- Voice Dropdown -->
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">เลือกลำโพงเสียง (Voice):</label>
+          <select id="voiceSelectDropdown" class="w-full p-2.5 rounded-xl border border-slate-300 text-xs bg-slate-50 focus:ring-2 focus:ring-sky-400">
+            <!-- Populated by JS -->
+          </select>
+          <span class="text-[11px] text-slate-400 mt-1 block">แนะนำ: เลือกเสียงภาษาไทย (Thai / th-TH) เช่น Microsoft Premwadee หรือ Google ภาษาไทย</span>
+        </div>
+
+        <!-- Speech Rate Slider -->
+        <div>
+          <div class="flex justify-between font-bold text-slate-700 mb-1">
+            <span>ความเร็วในการอ่าน (Speed):</span>
+            <span id="rateValueDisplay" class="text-sky-600">0.9x (แนะนำ: ช้าแต่นุ่มนวล)</span>
+          </div>
+          <input type="range" id="speechRateSlider" min="0.7" max="1.3" step="0.05" value="0.9" class="w-full accent-sky-500" oninput="updateRateSlider(this.value)">
+        </div>
+
+        <!-- Pitch Slider -->
+        <div>
+          <div class="flex justify-between font-bold text-slate-700 mb-1">
+            <span>ระดับเสียงสูง-ต่ำ (Pitch):</span>
+            <span id="pitchValueDisplay" class="text-sky-600">1.0 (ปกติ)</span>
+          </div>
+          <input type="range" id="speechPitchSlider" min="0.8" max="1.2" step="0.05" value="1.0" class="w-full accent-sky-500" oninput="updatePitchSlider(this.value)">
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <button onclick="testSpeechVoice()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5">
+          <i data-lucide="play" class="w-3.5 h-3.5"></i> ทดสอบฟังเสียงนี้
+        </button>
+        <button onclick="closeVoiceSettingsModal()" class="flex-1 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs btn-bounce shadow-md">
+          บันทึกการตั้งค่า
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DIGITAL SCRATCHPAD OVERLAY ==================== -->
+  <div id="scratchpadContainer" class="fixed inset-0 z-40 pointer-events-none hidden">
+    <canvas id="scratchCanvas" class="w-full h-full pointer-events-auto bg-slate-900/10 cursor-crosshair"></canvas>
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-slate-200 pointer-events-auto flex items-center gap-3">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i data-lucide="edit-3" class="w-4 h-4 text-emerald-600"></i> กระดาษทดดิจิทัล
+      </span>
+      <div class="h-4 w-px bg-slate-200"></div>
+      <button onclick="setCanvasColor('#0F172A')" class="w-5 h-5 rounded-full bg-slate-900 border-2 border-white shadow"></button>
+      <button onclick="setCanvasColor('#DC2626')" class="w-5 h-5 rounded-full bg-red-600 border-2 border-white shadow"></button>
+      <button onclick="setCanvasColor('#2563EB')" class="w-5 h-5 rounded-full bg-blue-600 border-2 border-white shadow"></button>
+      <button onclick="clearScratchpad()" class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold">
+        ลบทั้งหมด
+      </button>
+      <button onclick="toggleScratchpad()" class="text-xs px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold">
+        ปิดกระดาษทด
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== CORE JAVASCRIPT & AUDIO ENGINE ==================== -->
+  <script>
+    // State variables
+    let currentSubjectKey = 'math';
+    let activeQuestionSet = [];
+    let currentQIdx = 0;
+    let isAnsweredCurrent = false;
+    let goldCoins = 450;
+    let power5050Count = 1;
+    let bossHp = 50;
+
+    // TTS Settings
+    let selectedVoiceIndex = null;
+    let speechRate = 0.90;
+    let speechPitch = 1.0;
+    let isSpeakingActive = false;
+
+    // User question tracking (id -> { isDone: bool, isCorrect: bool })
+    let userProgressMap = {};
+
+    // Leitner Boxes (id -> { box: 1..5, wrongCount: int })
+    let leitnerBoxes = {};
+
+    // ==================== TTS SYSTEM WITH NATURAL PHONETIC FIX ====================
+    function populateVoiceList() {
+      if (!('speechSynthesis' in window)) return;
+      const dropdown = document.getElementById('voiceSelectDropdown');
+      dropdown.innerHTML = '';
+      const voices = window.speechSynthesis.getVoices();
+
+      let defaultThaiIndex = -1;
+      voices.forEach((v, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.innerText = `${v.name} (${v.lang})`;
+        if (v.lang.includes('th') || v.lang.includes('TH')) {
+          opt.innerText = `🇹🇭 ${v.name} [แนะนำ]`;
+          if (defaultThaiIndex === -1) defaultThaiIndex = idx;
+        }
+        dropdown.appendChild(opt);
+      });
+
+      if (defaultThaiIndex !== -1 && selectedVoiceIndex === null) {
+        selectedVoiceIndex = defaultThaiIndex;
+        dropdown.value = defaultThaiIndex;
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = populateVoiceList;
+      populateVoiceList();
+    }
+
+    function openVoiceSettingsModal() {
+      populateVoiceList();
+      if (selectedVoiceIndex !== null) {
+        document.getElementById('voiceSelectDropdown').value = selectedVoiceIndex;
+      }
+      document.getElementById('voiceSettingsModal').classList.remove('hidden');
+    }
+    function closeVoiceSettingsModal() {
+      selectedVoiceIndex = parseInt(document.getElementById('voiceSelectDropdown').value, 10);
+      document.getElementById('voiceSettingsModal').classList.add('hidden');
+      if (isSpeakingActive) window.speechSynthesis.cancel();
+    }
+    function updateRateSlider(val) {
+      speechRate = parseFloat(val);
+      document.getElementById('rateValueDisplay').innerText = `${val}x (${val <= 0.9 ? 'นุ่มนวลฟังสบาย' : 'ปกติ'})`;
+    }
+    function updatePitchSlider(val) {
+      speechPitch = parseFloat(val);
+      document.getElementById('pitchValueDisplay').innerText = `${val}`;
+    }
+    function testSpeechVoice() {
+      speakNaturalText('สวัสดีครับน้องๆ มาฝึกทำข้อสอบเตรียมขึ้น ม.1 ให้สนุกและเก่งขึ้นไปด้วยกันนะ', 'btn-play-tts', 'ttsBtnLabel');
+    }
+
+    // Natural Speech Synthesizer Function
+    function speakNaturalText(rawText, btnId, labelId) {
+      if (!('speechSynthesis' in window)) {
+        alert('เบราว์เซอร์นี้ยังไม่รองรับระบบสังเคราะห์เสียงอัตโนมัติ');
+        return;
+      }
+
+      if (isSpeakingActive) {
+        window.speechSynthesis.cancel();
+        isSpeakingActive = false;
+        resetSpeechButtonUI();
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      // Clean text for natural Thai pronunciation
+      let clean = rawText
+        .replace(/<[^>]*>?/gm, '')
+        .replace(/[\$\(\)\*]/g, '')
+        .replace(/÷/g, ' หารด้วย ')
+        .replace(/×/g, ' คูณกับ ')
+        .replace(/\+/g, ' บวกกับ ')
+        .replace(/-/g, ' ลบด้วย ')
+        .replace(/=/g, ' เท่ากับ ')
+        .replace(/%/g, ' เปอร์เซ็นต์ ')
+        .replace(/\. /g, ', ')
+        .replace(/;/g, ', ');
+
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = 'th-TH';
+      utter.rate = speechRate;
+      utter.pitch = speechPitch;
+
+      const voices = window.speechSynthesis.getVoices();
+      if (selectedVoiceIndex !== null && voices[selectedVoiceIndex]) {
+        utter.voice = voices[selectedVoiceIndex];
+      } else {
+        const thaiV = voices.find(v => v.lang.includes('th') || v.lang.includes('TH'));
+        if (thaiV) utter.voice = thaiV;
+      }
+
+      utter.onstart = () => {
+        isSpeakingActive = true;
+        const b = document.getElementById(btnId);
+        const l = document.getElementById(labelId);
+        if (b) b.classList.add('speaking', 'ring-2', 'ring-sky-400');
+        if (l) l.innerText = 'หยุดเสียง';
+      };
+
+      utter.onend = () => {
+        isSpeakingActive = false;
+        resetSpeechButtonUI();
+      };
+
+      utter.onerror = () => {
+        isSpeakingActive = false;
+        resetSpeechButtonUI();
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    function resetSpeechButtonUI() {
+      const qBtn = document.getElementById('btn-play-tts');
+      const qLabel = document.getElementById('ttsBtnLabel');
+      if (qBtn) qBtn.classList.remove('speaking', 'ring-2', 'ring-sky-400');
+      if (qLabel) qLabel.innerText = 'ฟังเสียงอ่าน';
+
+      const sBtn = document.getElementById('btn-solution-tts');
+      const sLabel = document.getElementById('ttsSolutionLabel');
+      if (sBtn) sBtn.classList.remove('speaking', 'ring-2', 'ring-sky-400');
+      if (sLabel) sLabel.innerText = 'ฟังเสียงอธิบาย';
+    }
+
+    function toggleSpeechQuestion() {
+      const q = activeQuestionSet[currentQIdx];
+      if (!q) return;
+      speakNaturalText(q.ttsStem || q.stem, 'btn-play-tts', 'ttsBtnLabel');
+    }
+
+    function toggleSpeechSolution() {
+      const q = activeQuestionSet[currentQIdx];
+      if (!q) return;
+      speakNaturalText(q.ttsExplanation, 'btn-solution-tts', 'ttsSolutionLabel');
+    }
+
+    // Peek explanation / visual clue before answering
+    function peekExplanationBeforeAnswer() {
+      const explBox = document.getElementById('boxMascotSolution');
+      explBox.classList.remove('hidden');
+      document.getElementById('textResultGreeting').innerHTML = `<span class="text-amber-800 font-bold">💡 กำลังดูรูปใบ้และแนวคิดก่อนตอบ (ลองคิดตามแล้วเลือกช้อยส์ดูนะ!)</span>`;
+    }
+
+    // ==================== WEB AUDIO API EFFECTS ====================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playChime(freq, type, duration) {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+    function soundSwordHit() {
+      playChime(440, 'sawtooth', 0.1);
+      setTimeout(() => playChime(880, 'sine', 0.2), 80);
+    }
+    function soundHurt() {
+      playChime(220, 'triangle', 0.25);
+    }
+
+    // ==================== INITIALIZATION & QUESTION DATA ====================
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      if (typeof MASTER_QUESTION_BANK !== 'undefined') {
+        selectSubjectRealm('math');
+      } else {
+        alert('กำลังโหลดคลังข้อสอบ 250 ข้อ...');
+      }
+      initScratchCanvas();
+    });
+
+    function switchTab(tabKey) {
+      if (isSpeakingActive) {
+        window.speechSynthesis.cancel();
+        isSpeakingActive = false;
+        resetSpeechButtonUI();
+      }
+
+      ['quest', 'clinic', 'schedule'].forEach(k => {
+        document.getElementById(`view-${k}`).classList.add('hidden');
+        const b = document.getElementById(`tab-${k}`);
+        if(b) {
+          b.classList.remove('text-amber-600', 'border-amber-500', 'font-bold');
+          b.classList.add('text-slate-500', 'border-transparent', 'font-medium');
+        }
+      });
+
+      document.getElementById(`view-${tabKey}`).classList.remove('hidden');
+      const activeB = document.getElementById(`tab-${tabKey}`);
+      if(activeB) {
+        activeB.classList.add('text-amber-600', 'border-amber-500', 'font-bold');
+        activeB.classList.remove('text-slate-500', 'border-transparent', 'font-medium');
+      }
+      lucide.createIcons();
+    }
+
+    // Subject Realm Selector (50 questions each)
+    function selectSubjectRealm(subjectKey) {
+      currentSubjectKey = subjectKey;
+
+      document.querySelectorAll('.realm-pill').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-slate-950', 'border-amber-600', 'shadow-sm');
+        btn.classList.add('bg-slate-50', 'text-slate-700', 'border-slate-200');
+      });
+      const activeBtn = document.getElementById(`realm-${subjectKey}`);
+      if(activeBtn) {
+        activeBtn.classList.add('bg-amber-500', 'text-slate-950', 'border-amber-600', 'shadow-sm');
+        activeBtn.classList.remove('bg-slate-50', 'text-slate-700', 'border-slate-200');
+      }
+
+      if (subjectKey === 'daily') {
+        activeQuestionSet = [];
+        ['math', 'science', 'english', 'thai', 'social'].forEach(s => {
+          const subset = MASTER_QUESTION_BANK.filter(q => q.subject === s).slice(0, 2);
+          activeQuestionSet.push(...subset);
+        });
+        document.getElementById('currentSubjectCounterLabel').innerText = 'ควิซวันนี้: 10 ข้อคละวิชา';
+      } else {
+        activeQuestionSet = MASTER_QUESTION_BANK.filter(q => q.subject === subjectKey);
+        const thaiNames = { math: 'คณิตศาสตร์', science: 'วิทยาศาสตร์', english: 'ภาษาอังกฤษ', thai: 'ภาษาไทย', social: 'สังคมศึกษา' };
+        document.getElementById('currentSubjectCounterLabel').innerText = `กำลังฝึก: ${thaiNames[subjectKey]} (50 ข้อเต็ม)`;
+      }
+
+      currentQIdx = 0;
+      bossHp = activeQuestionSet.length;
+      updateBossHpDisplay();
+      render50JumpGrid();
+      renderCurrentQuestionCard();
+    }
+
+    function updateBossHpDisplay() {
+      document.getElementById('bossHpCounter').innerText = `${bossHp} / ${activeQuestionSet.length}`;
+      const pct = Math.max(0, (bossHp / activeQuestionSet.length) * 100);
+      document.getElementById('bossHpFill').style.width = `${pct}%`;
+    }
+
+    // Render 50 Jump Grid
+    function render50JumpGrid() {
+      const grid = document.getElementById('questionJumpGrid');
+      grid.innerHTML = '';
+      activeQuestionSet.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        const progress = userProgressMap[q.id];
+        let colorClass = 'bg-slate-200 text-slate-700 hover:bg-slate-300';
+        if (progress) {
+          colorClass = progress.isCorrect ? 'bg-emerald-500 text-white font-bold' : 'bg-rose-500 text-white font-bold';
+        }
+        if (idx === currentQIdx) {
+          colorClass += ' ring-2 ring-amber-500 ring-offset-1';
+        }
+
+        btn.className = `w-7 h-7 rounded-lg text-xs flex items-center justify-center transition ${colorClass}`;
+        btn.innerText = idx + 1;
+        btn.onclick = () => {
+          currentQIdx = idx;
+          renderCurrentQuestionCard();
+          render50JumpGrid();
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    // Render Current Question Card
+    function renderCurrentQuestionCard() {
+      if (isSpeakingActive) {
+        window.speechSynthesis.cancel();
+        isSpeakingActive = false;
+        resetSpeechButtonUI();
+      }
+
+      isAnsweredCurrent = false;
+      const q = activeQuestionSet[currentQIdx];
+      if (!q) return;
+
+      document.getElementById('badgeSubjectName').innerText = q.subjectName;
+      document.getElementById('textQuestionIndex').innerText = `ข้อที่ ${currentQIdx + 1} / ${activeQuestionSet.length}`;
+      document.getElementById('textTopic').innerText = `หัวข้อ: ${q.topic}`;
+      document.getElementById('textStem').innerHTML = q.stem;
+
+      // SVG Graphic Box (Stem)
+      const svgBox = document.getElementById('boxSvgGraphic');
+      if (q.graphicSvg && q.graphicSvg.trim() !== '') {
+        svgBox.innerHTML = q.graphicSvg;
+        svgBox.classList.remove('hidden');
+      } else {
+        svgBox.classList.add('hidden');
+      }
+
+      // Populate Choices
+      const grid = document.getElementById('gridChoices');
+      grid.innerHTML = '';
+      const choiceLabels = ['ก.', 'ข.', 'ค.', 'ง.'];
+      q.choices.forEach((c, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `p-4 rounded-2xl bg-slate-50 hover:bg-amber-50/80 border-2 border-slate-200 hover:border-amber-400 text-left transition flex items-center gap-3.5 font-medium text-slate-800 btn-bounce`;
+        btn.id = `choiceBtnItem-${idx}`;
+        btn.onclick = () => handleChoiceAnswer(idx, c.isCorrect);
+        btn.innerHTML = `
+          <span class="w-8 h-8 rounded-xl bg-white border border-slate-300 flex items-center justify-center font-bold text-slate-600 shrink-0 text-sm">${choiceLabels[idx]}</span>
+          <span class="text-base">${c.text}</span>
+        `;
+        grid.appendChild(btn);
+      });
+
+      // Populate Mascot Solutions
+      document.getElementById('textMetaphor').innerHTML = q.metaphor;
+      document.getElementById('textMathSteps').innerHTML = q.stepsMath;
+      document.getElementById('textProShortcut').innerHTML = q.proShortcut;
+
+      // 🖼️ Populate Explanation SVG Diagram
+      const explSvgBox = document.getElementById('boxExplSvg');
+      if (q.explSvg && q.explSvg.trim() !== '') {
+        explSvgBox.innerHTML = q.explSvg;
+        document.getElementById('boxExplDiagramContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('boxExplDiagramContainer').classList.add('hidden');
+      }
+
+      document.getElementById('boxMascotSolution').classList.add('hidden');
+      document.getElementById('btn-5050').disabled = false;
+      document.getElementById('btn-5050').classList.remove('opacity-40');
+    }
+
+    // Handle Choice Selection
+    function handleChoiceAnswer(idx, isCorrect) {
+      if (isAnsweredCurrent) return;
+      isAnsweredCurrent = true;
+
+      const q = activeQuestionSet[currentQIdx];
+      const clickedBtn = document.getElementById(`choiceBtnItem-${idx}`);
+      const explBox = document.getElementById('boxMascotSolution');
+      const greet = document.getElementById('textResultGreeting');
+      const dropStatus = document.getElementById('textLeitnerStatus');
+      const mascotFace = document.getElementById('mascotFace');
+
+      // Record User Progress
+      userProgressMap[q.id] = { isDone: true, isCorrect: isCorrect };
+      render50JumpGrid();
+
+      if (isCorrect) {
+        soundSwordHit();
+        confetti({ particleCount: 35, spread: 65, origin: { y: 0.7 } });
+        clickedBtn.classList.remove('bg-slate-50', 'border-slate-200');
+        clickedBtn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+        mascotFace.innerText = '🎉';
+
+        greet.innerHTML = `<span class="text-emerald-700">⚔️ ฟันดาเมจเข้าเต็มๆ! ตอบถูกต้อง (+15 XP, +10 ทอง)</span>`;
+        dropStatus.innerText = '✨ เลื่อนระดับในกล่องความจำแล้ว!';
+
+        if (bossHp > 0) bossHp--;
+        updateBossHpDisplay();
+
+        // Leitner Promotion
+        if (!leitnerBoxes[q.id]) leitnerBoxes[q.id] = { box: 1, wrongCount: 0 };
+        if (leitnerBoxes[q.id].box < 5) leitnerBoxes[q.id].box += 1;
+
+        goldCoins += 10;
+        document.getElementById('goldCoins').innerText = goldCoins;
+      } else {
+        soundHurt();
+        clickedBtn.classList.remove('bg-slate-50', 'border-slate-200');
+        clickedBtn.classList.add('bg-rose-50', 'border-rose-400', 'text-rose-900');
+        mascotFace.innerText = '🦉';
+
+        q.choices.forEach((c, cIdx) => {
+          if (c.isCorrect) {
+            const corr = document.getElementById(`choiceBtnItem-${cIdx}`);
+            corr.classList.add('border-emerald-500', 'bg-emerald-50/70');
+          }
+        });
+
+        greet.innerHTML = `<span class="text-amber-900">💡 โดนบอสป้องกันไว้ได้! ดูรูปตัวอย่างแล้วจะร้องอ๋อทันที</span>`;
+        dropStatus.innerText = '📦 เก็บเข้ากล่องที่ 1 (คลินิกข้อผิด) เรียบร้อย!';
+
+        // Leitner Penalty
+        if (!leitnerBoxes[q.id]) leitnerBoxes[q.id] = { box: 1, wrongCount: 1 };
+        else {
+          leitnerBoxes[q.id].box = 1;
+          leitnerBoxes[q.id].wrongCount += 1;
+        }
+      }
+
+      explBox.classList.remove('hidden');
+      updateClinicSummary();
+      renderClinicItemList();
+    }
+
+    function goToNextQuestion() {
+      if (currentQIdx < activeQuestionSet.length - 1) {
+        currentQIdx++;
+        renderCurrentQuestionCard();
+        render50JumpGrid();
+      } else {
+        alert('🎉 ยอดเยี่ยมมาก! ตะลุยข้อสอบชุดนี้ครบตามเป้าหมายแล้ว อย่าลืมแวะไปคลินิกเพื่อเคลียร์ข้อผิดนะ!');
+        switchTab('clinic');
+      }
+    }
+
+    // 50:50 Tool
+    function use5050Tool() {
+      if (power5050Count <= 0 || isAnsweredCurrent) return;
+      power5050Count--;
+      document.getElementById('count5050').innerText = power5050Count;
+      document.getElementById('btn-5050').disabled = true;
+      document.getElementById('btn-5050').classList.add('opacity-40');
+
+      const q = activeQuestionSet[currentQIdx];
+      let removed = 0;
+      q.choices.forEach((c, idx) => {
+        if (!c.isCorrect && removed < 2) {
+          const btn = document.getElementById(`choiceBtnItem-${idx}`);
+          btn.style.opacity = '0.25';
+          btn.style.pointerEvents = 'none';
+          removed++;
+        }
+      });
+      playChime(500, 'sine', 0.1);
+    }
+
+    // ==================== CLINIC CONTROLS ====================
+    function updateClinicSummary() {
+      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      let activeMistakes = 0;
+      Object.values(leitnerBoxes).forEach(st => {
+        if(counts[st.box] !== undefined) counts[st.box]++;
+        if(st.box < 5) activeMistakes++;
+      });
+
+      for(let i=1; i<=5; i++) {
+        document.getElementById(`countBox${i}`).innerText = counts[i];
+      }
+      document.getElementById('badgeMistakeCount').innerText = activeMistakes;
+      document.getElementById('btnMistakeCount').innerText = activeMistakes;
+    }
+
+    function renderClinicItemList() {
+      const container = document.getElementById('clinicItemsList');
+      container.innerHTML = '';
+
+      let found = 0;
+      MASTER_QUESTION_BANK.forEach(q => {
+        const state = leitnerBoxes[q.id];
+        if (state && state.box < 5) {
+          found++;
+          const row = document.createElement('div');
+          row.className = 'p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs hover:border-purple-300 transition';
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 font-black flex items-center justify-center shrink-0">
+                กล่อง ${state.box}
+              </span>
+              <div>
+                <span class="font-bold text-slate-900 text-sm">${q.subjectName}</span>
+                <p class="text-slate-500 font-medium">${q.topic}</p>
+                <p class="text-slate-400 line-clamp-1 mt-0.5">${q.stem}</p>
+              </div>
+            </div>
+            <button onclick="reviewSingleClinicQuestion('${q.id}')" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold shrink-0 btn-bounce flex items-center gap-1.5">
+              <span>แก้มือข้อนี้</span> <i data-lucide="play" class="w-3.5 h-3.5"></i>
+            </button>
+          `;
+          container.appendChild(row);
+        }
+      });
+
+      if (found === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-emerald-600 font-bold text-sm">🎉 ยอดเยี่ยมที่สุด! ไม่มีข้อผิดค้างในคลินิกเลย น้องพร้อมสอบแล้ว!</div>';
+      }
+      lucide.createIcons();
+    }
+
+    function reviewSingleClinicQuestion(qId) {
+      const target = MASTER_QUESTION_BANK.find(q => q.id === qId);
+      if (target) {
+        const cloned = JSON.parse(JSON.stringify(target));
+        cloned.choices.sort(() => Math.random() - 0.5);
+        activeQuestionSet = [cloned];
+        currentQIdx = 0;
+        bossHp = 1;
+        updateBossHpDisplay();
+        switchTab('quest');
+        render50JumpGrid();
+        renderCurrentQuestionCard();
+      }
+    }
+
+    function startRedemptionMode() {
+      const mistakeList = MASTER_QUESTION_BANK.filter(q => leitnerBoxes[q.id] && leitnerBoxes[q.id].box < 5);
+      if (mistakeList.length > 0) {
+        activeQuestionSet = mistakeList.map(item => {
+          const cloned = JSON.parse(JSON.stringify(item));
+          cloned.choices.sort(() => Math.random() - 0.5);
+          return cloned;
+        });
+        currentQIdx = 0;
+        bossHp = activeQuestionSet.length;
+        updateBossHpDisplay();
+        switchTab('quest');
+        render50JumpGrid();
+        renderCurrentQuestionCard();
+      } else {
+        alert('สุดยอดมาก! กล่องข้อผิดว่างเปล่า ไม่มีข้อต้องแก้มือในตอนนี้');
+      }
+    }
+
+    // ==================== CANVAS SCRATCHPAD ====================
+    let canvas, ctx, isDrawing = false, strokeColor = '#0F172A';
+    function initScratchCanvas() {
+      canvas = document.getElementById('scratchCanvas');
+      ctx = canvas.getContext('2d');
+      resizeScratchCanvas();
+      window.addEventListener('resize', resizeScratchCanvas);
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('touchstart', startDrawTouch);
+      canvas.addEventListener('touchmove', drawTouch);
+      canvas.addEventListener('touchend', stopDraw);
+    }
+    function resizeScratchCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    function toggleScratchpad() {
+      document.getElementById('scratchpadContainer').classList.toggle('hidden');
+    }
+    function setCanvasColor(col) { strokeColor = col; }
+    function clearScratchpad() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    function startDraw(e) {
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.clientX, e.clientY);
+    }
+    function draw(e) {
+      if(!isDrawing) return;
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+    }
+    function startDrawTouch(e) {
+      isDrawing = true;
+      const touch = e.touches[0];
+      ctx.beginPath();
+      ctx.moveTo(touch.clientX, touch.clientY);
+      e.preventDefault();
+    }
+    function drawTouch(e) {
+      if(!isDrawing) return;
+      const touch = e.touches[0];
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineTo(touch.clientX, touch.clientY);
+      ctx.stroke();
+      e.preventDefault();
+    }
+    function stopDraw() { isDrawing = false; }
+  </script>
+</body>
+</html>
